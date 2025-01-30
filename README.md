@@ -57,6 +57,7 @@ To facilitate navigation, a link has been added at the end of each section to go
 - mimikatz
 - Rubeus
 - Bloodhound
+- Kerbrute
 - [Invoke-SessionHunter](https://github.com/Leo4j/Invoke-SessionHunter)
 
 # Powershell
@@ -134,6 +135,24 @@ Find-InterestingDomainAcl -ResolveGUIDs | ?{$_.IdentityReferenceName -match "RDP
 
 # Trusts
 Get-DomainTrust
+```
+
+## Linux
+```bash
+### netexec ###
+# Null sessions
+nxc smb 10.10.10.161 -u '' -p ''
+nxc smb 10.10.10.161 -u '' -p '' --shares
+nxc smb 10.10.10.161 -u '' -p '' --pass-pol
+nxc smb 10.10.10.161 -u '' -p '' --users
+nxc smb 10.10.10.161 -u '' -p '' --groups
+
+# Anonymous sessions
+nxc smb 10.10.10.161 -u 'anonymous' -p '' --shares
+
+### kerbrute ###
+## note: obviously too noisy
+./kerbrute userenum --dc [IP] -d [DOMAIN.local] [USERLIST.TXT]
 ```
 
 ## User Hunting
@@ -505,11 +524,16 @@ Get-SQLServerLinkCrawl -Instance dcorp-mssql.dollarcorp.moneycorp.local -Query "
 # Additional Attacks
 ## Zerologon
 >Zerologon is a vulnerability in the cryptography of Microsoft’s Netlogon process that allows an attack against Microsoft Active Directory domain controllers. Zerologon makes it possible for a hacker to impersonate any computer, including the root domain controller.
-
+```bash
+nxc smb <ip> -u '' -p '' -M zerologon
+```
 Check if is vulnerable with this script:
 https://github.com/SecuraBV/CVE-2020-1472
 
 ## Printnightmare 
+```bash
+nxc smb <ip> -u '' -p '' -M printnightmare
+```
 Check if is vulnerable with this script:
 https://github.com/cube0x0/CVE-2021-1675
 
