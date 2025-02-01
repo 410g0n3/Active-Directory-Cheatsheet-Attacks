@@ -10,7 +10,7 @@ To facilitate navigation, a link has been added at the end of each section to go
     - 2.3. [Others](#others)
 - 3. [Enumeration](#enumeration)
     - 3.1. [PowerView](#powerview)
-    - 3.2. [Linux](linux)
+    - 3.2. [Linux](#linux)
     - 3.3. [User Hunting](#user-hunting)
     - 3.4. [BloodHound](#bloodhound)
 - 4. [Initial Attacks Vectors](#initial-attacks-vectors)
